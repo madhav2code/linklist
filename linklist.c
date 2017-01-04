@@ -37,6 +37,23 @@ int is_empty()
     return (size) ? 1 : 0;
 }
 
+struct node * node_at(int index)
+{
+    struct node *ptr = head;
+    int tmp = 0;
+
+    if (index > size) {
+        return NULL;
+    }
+    while((ptr != NULL) && (tmp != index)) {
+        ptr = ptr->next;
+        tmp++;
+    }
+
+    return ptr;
+
+}
+
 int value_at(int index)
 {
     struct node *ptr = head;
@@ -122,6 +139,41 @@ struct node* pop_back()
     return ptr;
 }
 
+void sorted_insert(int data)
+{
+    struct node **ptr = &head;
+    struct node *n = (struct node *)malloc(sizeof(struct node));
+    if (n == NULL) {
+        return;
+    }
+
+    n->data = data;
+    n->next = NULL;
+    if (*ptr == NULL || (*ptr)->data >= data) {
+        n->next = *ptr;
+        *ptr = n;
+        return;
+    }
+
+    while((*ptr)->next != NULL && (*ptr)->next->data < data) {
+        ptr = &((*ptr)->next);
+    }
+    n->next = (*ptr)->next;
+    (*ptr)->next = n;
+}
+
+void delete_node(struct node *n)
+{
+    struct node **ptr = &head;
+
+    while (*ptr != n) {
+        ptr = &(*ptr)->next;
+    }
+    if (*ptr == NULL) {
+        return;
+    }
+    *ptr = n->next;
+}
 int main(int argc, char* argv[])
 {
     printf("is empty %s\n", is_empty() ? "false" : "true");
@@ -137,6 +189,10 @@ int main(int argc, char* argv[])
     print_list();
     printf("size = %d\n", list_size());
     printf("value at %d = %d\n", 5, value_at(5));
+    printf("value at %d = %d\n", 2, value_at(2));
+    print_list();
+    delete_node(node_at(5));
+    print_list();
     printf("is empty %s\n", is_empty() ? "false" : "true");
     //printf("pop_back %d\n", pop_back()->data);
     return 0;
